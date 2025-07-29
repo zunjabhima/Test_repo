@@ -1,0 +1,53 @@
+import { test, expect } from '@playwright/test';
+
+test('Provider Onboarding - Mandatory Fields', async ({ page }) => {
+  // Navigate to the login page
+  await page.goto('https://stage_ketamin.uat.provider.ecarehealth.com/');
+
+  // Login with provided credentials
+  await page.fill('[name="username"]', 'amanda.lee@healthcaretest.com');
+  await page.fill('input[type="password"]', 'Admin@123');
+  await page.click('button:has-text("Let\'s get Started")');
+
+  // Wait for the dashboard to load
+  await page.waitForSelector(':has-text("Dashboard")');
+
+  // Navigate to Settings
+  await page.click('button.MuiTab-root:has-text("Settings")');
+  
+  // Click on User Settings from the dropdown
+  await page.click('li.MuiMenuItem-root:has-text("User Settings")');
+
+  // Go to Providers tab
+  await page.click('button[role="tab"]:has-text("Providers")');
+
+  // Click Add Provider User button
+  await page.click('button.MuiButton-outlined:has-text("Add Provider User")');
+
+  // Fill mandatory provider details
+  await page.fill('input[name="firstName"]', 'Abraham');
+  await page.fill('input[name="lastName"]', 'Linclone');
+  await page.fill('input[name="email"]', 'abraham@mailinator.com');
+
+  // Select Role - Provider
+  await page.click('input[name="role"]');
+  await page.click('li[role="option"]:has-text("Provider")');
+
+  // Select Gender - Male
+  await page.click('input[name="gender"]');
+  await page.click('li[role="option"]:has-text("Male")');
+
+  // Save the provider
+  await page.click('button.MuiButton-contained:has-text("Save")');
+
+  // Verify the provider was added successfully
+  // Wait for the form to close and return to the providers list
+  await page.waitForTimeout(3000);
+  
+  // Check if the new provider appears in the list
+  await expect(page.locator('text=Abraham')).toBeVisible();
+  await expect(page.locator('text=Linclone')).toBeVisible();
+  await expect(page.locator('text=abraham@mailinator.com')).toBeVisible();
+
+  console.log('✅ Provider "Abraham Linclone" has been successfully added to the providers list');
+});
